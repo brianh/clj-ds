@@ -49,14 +49,14 @@ PersistentTreeMap.java
 			assertEquals(l.get(--i), rit.next());
 		}
 		assertEquals(0,i);
-		
 	}
 	
+	@SuppressWarnings( { "rawtypes", "unchecked" } )
 	@Test
 	public final void testStructMap() {
-		 Def def = PersistentStructMap.createSlotMap(
+		Def def = PersistentStructMap.createSlotMap(
 				new Cons("1", new Cons("2", new Cons("3",null))));
-		 PersistentStructMap<String, Integer> sm = PersistentStructMap.construct(def, 
+		PersistentStructMap<String, Integer> sm = PersistentStructMap.construct(def, 
 				 new Cons(1,new Cons(2,new Cons(3,null))));
 		 
 		for (int i=4;i<10000;i++) {
@@ -75,7 +75,5 @@ PersistentTreeMap.java
 			assertEquals(l.get(--i),rit.next());
 		}
 		assertEquals(0,i);
-		
-				
 	}
 }

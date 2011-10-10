@@ -4,6 +4,7 @@
 package com.trifork.clj_ds.test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.TreeMap;
 import java.util.Map.Entry;
 
@@ -26,7 +28,6 @@ import com.trifork.clj_ds.PersistentHashMap;
  */
 public class PersistentHashMapTest {
 
-
 	/**
 	 * Test method for {@link com.trifork.clj_ds.PersistentHashMap#emptyMap()}.
 	 */
@@ -36,9 +37,8 @@ public class PersistentHashMapTest {
 		assertEquals(0, genMap.count());
 		PersistentHashMap<Number, Boolean> genMap2 = PersistentHashMap.emptyMap();
 		assertEquals(0, genMap2.count());
-		assert(genMap == (PersistentHashMap) genMap2);
+		assertSame( genMap, genMap2);
 	}
-
 	
 	@Test
 	public final void testNullMap() {
@@ -58,24 +58,22 @@ public class PersistentHashMapTest {
 			} else {
 				assertEquals(43, (int)e.getValue());
 			}
-			
 		}
 		 assertEquals(2, count);
 		 assertTrue(nullKey);
 	}
-
 	
 	@Test
 	public final void testIteratorFrom() {
 		final int N = 20;
 		IPersistentMap<Integer, Integer> genMap = PersistentHashMap.emptyMap();
+		Random r = new Random( 0 );
 		for (int i=0;i<N;i++) {
-			Integer random = (int) Math.ceil(1000*Math.random());
+			Integer random = r.nextInt( 1000 );
 			while (genMap.containsKey(random)) {
-				random = (int) Math.ceil(1000*Math.random());
+				random = r.nextInt( 1000 );
 			}
 			genMap = genMap.assoc(random, random);
-			
 		}
 		
 		List<Integer> l = new ArrayList<Integer>(20);
@@ -85,18 +83,14 @@ public class PersistentHashMapTest {
 		
 		assertEquals(20, l.size());
 		
-		
 		int index = 10;
 		int count = 0;
 		for (Iterator<Map.Entry<Integer, Integer>> iterator = genMap.iteratorFrom(l.get(index)); iterator.hasNext();) {
-			Entry<Integer, Integer> next = iterator.next();
-			assertEquals(l.get(index), next.getKey());
+			assertEquals(l.get(index), iterator.next().getKey());
 			index++;
 			count++;
 		}
 		assertEquals(10, count);
-		
-		
 	}
 
 	/**
@@ -116,10 +110,9 @@ public class PersistentHashMapTest {
 		}
 		assertEquals(N, output.count());
 		
-		input = Collections.EMPTY_MAP;
+		input = Collections.emptyMap();
 		output = PersistentHashMap.create(input);
 		assertEquals(0, output.count());
-		
 	}
 
 	/**
@@ -131,7 +124,6 @@ public class PersistentHashMapTest {
 		assertEquals(false, ib.get(1));
 		assertEquals(true, ib.get(2));
 		assertEquals(false, ib.get(3));
-		
 	}
 
 	/**
@@ -140,10 +132,10 @@ public class PersistentHashMapTest {
 	@Test(expected=ClassCastException.class)
 	public final void testBadInvocCreateObjectArray() {
 		PersistentHashMap<Integer, Boolean> bad = PersistentHashMap.create(1,false,2,"true",3,false);
-		Boolean b = bad.get(2);
+		if ( bad.get(2) )
+			return;
 	}
 	
-
 	/**
 	 * NB: this methods takes a long time to run. Be patient.
 	 * Test method for {@link com.trifork.clj_ds.PersistentHashMap#iterator()}.
@@ -162,7 +154,6 @@ public class PersistentHashMapTest {
 			Integer o = new Integer(i);
 			dsMap = dsMap.assoc(o, o);
 		}
-		
 	}
 
 	@Test
@@ -179,9 +170,9 @@ public class PersistentHashMapTest {
 			hs.add(e.getKey());
 		}
 		assertEquals(N, hs.size());
-		
 	}
 	
+	@SuppressWarnings( { "rawtypes", "unchecked" } )
 	@Test
 	public final void testRandomReverseIterator() {
 		final int N = 33000;
@@ -189,7 +180,6 @@ public class PersistentHashMapTest {
 		for (int i=0;i<N;i++) {
 			double random = Math.random();
 			genMap = genMap.assoc(random, ""+random);
-			
 		}
 		List lst = new ArrayList();
 		for (Map.Entry<Double, String> e: genMap) {
@@ -202,8 +192,5 @@ public class PersistentHashMapTest {
 			assertEquals(removed+"", e.getValue());
 		}
 		assertEquals(0, lst.size());
-		
 	}
-	
-	
 }
